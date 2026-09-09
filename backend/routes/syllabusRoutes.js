@@ -45,9 +45,10 @@ const getFilePath = (file) => {
 
 // POST /api/syllabus/upload
 router.post('/upload', upload.single('syllabus'), async (req, res) => {
-    const { title, pastedText, examDate } = req.body;
+    const { title, examDate } = req.body;
 
-    let rawText = pastedText || '';
+    // Sanitize pasted text: strip HTML tags and limit length
+    let rawText = (req.body.pastedText || '').replace(/<[^>]*>/g, '').trim().substring(0, 50000);
     let fileType = 'paste';
     let fileUrl = null;
 
@@ -64,16 +65,18 @@ router.post('/upload', upload.single('syllabus'), async (req, res) => {
                 rawText = await extractTextFromPDF(filePath);
             } catch (parseErr) {
                 console.warn('PDF extraction failed, using title as fallback context:', parseErr.message);
-                // GRACEFUL FALLBACK: Use the title to generate topics instead of crashing.
-                // This handles encrypted/encoded Hindi PDFs and Gemini quota issues.
                 pdfWarning = 'Could not extract text from PDF — AI will generate topics based on your title.';
                 rawText = `Subject/Syllabus: ${title || 'Unknown Subject'}\n` +
                     `Source: ${req.file.originalname}\n` +
                     `Please generate relevant academic topics for this subject.`;
+            } finally {
+                // Always delete the uploaded file after extraction to save disk space
+                try { fs.unlinkSync(filePath); } catch (_) {}
             }
         } else {
             try {
-                rawText = fs.readFileSync(filePath, 'utf-8');
+                rawText = fs.readFileSync(filePath, 'utf-8').substring(0, 50000);
+                fs.unlinkSync(filePath); // delete after reading
             } catch (readErr) {
                 try { fs.unlinkSync(filePath); } catch (_) { }
                 res.status(400);

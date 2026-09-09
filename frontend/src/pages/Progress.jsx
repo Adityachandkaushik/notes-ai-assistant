@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, Brain, CheckCircle, Star, Loader2, ArrowLeft, ChevronRight, X, Check, RefreshCw, Calendar } from 'lucide-react';
+import { TrendingUp, Brain, CheckCircle, Star, Loader2, ArrowLeft, ChevronRight, X, Calendar, Zap, Target } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -191,7 +191,7 @@ export default function Progress() {
     };
 
     return (
-        <div className="min-h-screen gradient-bg p-8">
+        <div className="min-h-screen gradient-bg p-6 md:p-8">
             {quizQuestions && (
                 <QuizModal questions={quizQuestions} onClose={() => setQuizQuestions(null)} syllabusId={syllabusId} />
             )}
@@ -199,7 +199,7 @@ export default function Progress() {
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-8">
-                    <Link to={`/notes/${syllabusId}`} className="p-2 rounded-xl glass border border-white/[0.06] text-slate-500 hover:text-white transition-colors">
+                    <Link to={`/notes/${syllabusId}`} className="p-2 rounded-xl bg-white/[0.05] border border-white/[0.07] text-slate-500 hover:text-white hover:bg-white/[0.08] transition-all">
                         <ArrowLeft size={16} />
                     </Link>
                     <div>
@@ -240,31 +240,47 @@ export default function Progress() {
                 {/* Stats Row */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     {[
-                        { label: 'Completed', value: completedTopics.length, total: topics.length, color: 'text-emerald-400' },
-                        { label: 'Progress', value: `${progressPercent}%`, color: 'text-violet-400' },
-                        { label: 'Flashcards', value: allTerms.length, color: 'text-cyan-400' },
-                        { label: 'Quizzes Taken', value: quizScores.length, color: 'text-pink-400' },
-                    ].map(({ label, value, total, color }) => (
-                        <div key={label} className="glass rounded-2xl p-5 border border-white/[0.06]">
-                            <p className="text-slate-500 text-xs mb-1">{label}</p>
-                            <p className={`text-3xl font-black ${color}`}>{value}</p>
-                            {total !== undefined && <p className="text-slate-700 text-xs">of {total}</p>}
-                        </div>
+                        { label: 'Topics Completed', value: completedTopics.length, total: topics.length, icon: CheckCircle, color: 'text-emerald-400', bg: 'bg-emerald-600/15', glow: 'rgba(16,185,129,0.15)', accent: 'from-emerald-600/15 to-transparent' },
+                        { label: 'Study Progress', value: `${progressPercent}%`, icon: TrendingUp, color: 'text-violet-400', bg: 'bg-violet-600/15', glow: 'rgba(124,58,237,0.15)', accent: 'from-violet-600/15 to-transparent' },
+                        { label: 'Flashcards', value: allTerms.length, icon: Star, color: 'text-cyan-400', bg: 'bg-cyan-600/15', glow: 'rgba(6,182,212,0.15)', accent: 'from-cyan-600/15 to-transparent' },
+                        { label: 'Quizzes Taken', value: quizScores.length, icon: Target, color: 'text-pink-400', bg: 'bg-pink-600/15', glow: 'rgba(236,72,153,0.15)', accent: 'from-pink-600/15 to-transparent' },
+                    ].map(({ label, value, total, icon: Icon, color, bg, glow, accent }) => (
+                        <motion.div key={label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                            className="relative overflow-hidden glass rounded-2xl p-5 border border-white/[0.06] hover:border-white/[0.1] transition-all"
+                            style={{ boxShadow: `0 0 24px ${glow}` }}>
+                            <div className={`absolute inset-0 bg-gradient-to-br ${accent} opacity-60 pointer-events-none`} />
+                            <div className="relative z-10">
+                                <div className={`w-9 h-9 ${bg} rounded-xl flex items-center justify-center mb-3`}>
+                                    <Icon size={16} className={color} />
+                                </div>
+                                <p className={`text-3xl font-black ${color}`}>{value}</p>
+                                <p className="text-slate-500 text-xs mt-1 font-medium">{label}</p>
+                                {total !== undefined && <p className="text-slate-700 text-[10px] mt-0.5">of {total} topics</p>}
+                            </div>
+                        </motion.div>
                     ))}
                 </div>
 
-                {/* Progress Ring and Topic List */}
+                {/* Progress + Topics */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    {/* Progress Overview */}
+                    {/* Topic Progress list */}
                     <div className="glass rounded-2xl p-6 border border-white/[0.06]">
-                        <h3 className="font-bold text-white mb-4 flex items-center gap-2"><TrendingUp size={16} className="text-violet-400" /> Topic Progress</h3>
-                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                        <h3 className="font-bold text-white mb-5 flex items-center gap-2">
+                            <div className="w-7 h-7 bg-violet-600/15 rounded-lg flex items-center justify-center">
+                                <TrendingUp size={14} className="text-violet-400" />
+                            </div>
+                            Topic Progress
+                        </h3>
+                        <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
                             {topics.map((t, i) => {
                                 const done = completedTopics.includes(t._id);
                                 return (
-                                    <div key={t._id} className="flex items-center gap-3 py-1.5">
-                                        {done ? <CheckCircle size={14} className="text-emerald-400 flex-shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-slate-700 flex-shrink-0" />}
-                                        <span className={`text-sm ${done ? 'text-slate-400 line-through decoration-slate-600' : 'text-slate-300'}`}>{t.name}</span>
+                                    <div key={t._id} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${done ? 'bg-emerald-500/5' : 'hover:bg-white/[0.02]'}`}>
+                                        {done
+                                            ? <CheckCircle size={14} className="text-emerald-400 flex-shrink-0" />
+                                            : <div className="w-3.5 h-3.5 rounded-full border border-slate-700 flex-shrink-0" />}
+                                        <span className={`text-sm flex-1 ${done ? 'text-slate-500 line-through decoration-slate-700' : 'text-slate-300'}`}>{t.name}</span>
+                                        {done && <span className="text-[10px] text-emerald-600 font-medium">Done</span>}
                                     </div>
                                 );
                             })}
@@ -273,26 +289,38 @@ export default function Progress() {
 
                     {/* Quiz Section */}
                     <div className="glass rounded-2xl p-6 border border-white/[0.06]">
-                        <h3 className="font-bold text-white mb-2 flex items-center gap-2"><Brain size={16} className="text-violet-400" /> AI Quiz</h3>
-                        <p className="text-slate-500 text-sm mb-4">Test your knowledge with AI-generated questions from your generated notes</p>
-                        <button
+                        <h3 className="font-bold text-white mb-2 flex items-center gap-2">
+                            <div className="w-7 h-7 bg-violet-600/15 rounded-lg flex items-center justify-center">
+                                <Brain size={14} className="text-violet-400" />
+                            </div>
+                            AI Quiz
+                        </h3>
+                        <p className="text-slate-500 text-sm mb-5">Test your knowledge with AI-generated questions from your notes</p>
+                        <motion.button
+                            whileHover={{ scale: 1.02, y: -1 }}
+                            whileTap={{ scale: 0.97 }}
                             onClick={startQuiz}
                             disabled={quizLoading}
-                            className="w-full bg-gradient-to-r from-violet-600 to-purple-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition-all hover:from-violet-500"
+                            className="w-full bg-gradient-to-r from-violet-600 to-purple-700 hover:from-violet-500 hover:to-purple-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition-all shadow-[0_0_20px_rgba(124,58,237,0.25)]"
                         >
-                            {quizLoading ? <><Loader2 size={16} className="animate-spin" /> Generating...</> : <><Brain size={16} /> Start Quiz</>}
-                        </button>
+                            {quizLoading ? <><Loader2 size={16} className="animate-spin" /> Generating Quiz...</> : <><Brain size={16} /> Start AI Quiz</>}
+                        </motion.button>
 
                         {quizScores.length > 0 && (
-                            <div className="mt-4">
-                                <p className="text-xs text-slate-600 mb-2">Recent scores</p>
-                                <div className="space-y-1.5">
-                                    {quizScores.slice(-3).reverse().map((s, i) => (
-                                        <div key={i} className="flex justify-between text-xs text-slate-500">
-                                            <span>Quiz {quizScores.length - i}</span>
-                                            <span className="text-violet-400 font-medium">{s.score}/{s.total} ({Math.round((s.score / s.total) * 100)}%)</span>
-                                        </div>
-                                    ))}
+                            <div className="mt-5 p-4 bg-white/[0.02] rounded-xl border border-white/[0.05]">
+                                <p className="text-xs text-slate-600 mb-3 uppercase tracking-wider font-medium">Recent Scores</p>
+                                <div className="space-y-2">
+                                    {quizScores.slice(-3).reverse().map((s, i) => {
+                                        const pct = Math.round((s.score / s.total) * 100);
+                                        return (
+                                            <div key={i} className="flex justify-between items-center text-xs">
+                                                <span className="text-slate-500">Quiz {quizScores.length - i}</span>
+                                                <span className={`font-bold ${pct >= 80 ? 'text-emerald-400' : pct >= 60 ? 'text-amber-400' : 'text-red-400'}`}>
+                                                    {s.score}/{s.total} · {pct}%
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}

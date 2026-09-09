@@ -110,6 +110,49 @@ html, body {
 .flip-card-front, .flip-card-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .flip-card-back { transform: rotateY(180deg); }
 
+/* Float animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float { animation: float 3s ease-in-out infinite; }
+
+/* Shimmer for skeleton loading */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+  background-size: 200% auto;
+  animation: shimmer 1.8s infinite;
+  border-radius: 8px;
+}
+
+/* AI generated chip */
+.ai-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(124,58,237,0.35);
+  background: rgba(124,58,237,0.1);
+  color: #c4b5fd;
+}
+
+/* Card hover lift */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+}
+
 /* ═══════════════════ LIGHT MODE ═══════════════════ */
 html.light {
   color-scheme: light;

@@ -1,13 +1,16 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload as UploadIcon, FileText, X, CheckCircle, Loader2, ArrowRight } from 'lucide-react';
+import {
+    Upload as UploadIcon, FileText, X, CheckCircle, Loader2,
+    ArrowRight, Brain, File, AlignLeft, CloudUpload
+} from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
 export default function Upload() {
     const navigate = useNavigate();
-    const [mode, setMode] = useState('drag'); // 'drag' | 'paste'
+    const [mode, setMode] = useState('drag');
     const [title, setTitle] = useState('');
     const [examDate, setExamDate] = useState('');
     const [file, setFile] = useState(null);
@@ -45,16 +48,12 @@ export default function Upload() {
             if (file) formData.append('syllabus', file);
             else formData.append('pastedText', pastedText);
 
-            // Show a follow-up message for PDFs that may use Gemini Vision
             if (file) {
-                setTimeout(() => setLoadingMsg('AI is reading the PDF content... (may take up to 2 mins for complex PDFs)'), 5000);
+                setTimeout(() => setLoadingMsg('AI is reading the PDF... (may take up to 2 mins for complex PDFs)'), 5000);
             }
 
-            // Do NOT set Content-Type manually — axios sets it automatically
-            // with the correct multipart boundary when FormData is passed
             const { data } = await api.post('/syllabus/upload', formData);
 
-            // Show warning if PDF could not be fully read (graceful fallback mode)
             if (data.warning) {
                 toast('⚠️ ' + data.warning, { icon: '⚠️', duration: 5000, style: { background: '#713f12', color: '#fef9c3' } });
             } else {
@@ -71,154 +70,160 @@ export default function Upload() {
     };
 
     return (
-        <div className="min-h-screen gradient-bg p-8">
+        <div className="min-h-screen gradient-bg p-6 md:p-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-2xl mx-auto"
             >
-                {/* Header */}
+                {/* ─── Header ─── */}
                 <div className="mb-10">
                     <h1 className="text-3xl font-black text-white mb-2">Upload Syllabus</h1>
-                    <p className="text-slate-500">Upload a PDF, TXT file, or paste your syllabus text. AI will extract topics and generate detailed notes.</p>
+                    <p className="text-slate-500">Transform your study materials into AI-powered notes, quizzes, and flashcards.</p>
                 </div>
 
-                {/* Title and Exam Date Inputs */}
+                {/* ─── Subject Info ─── */}
                 <div className="mb-6 flex flex-col sm:flex-row gap-4">
                     <div className="flex-1">
-                        <label className="block text-sm font-medium text-slate-400 mb-2">Syllabus Title</label>
+                        <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Subject Title *</label>
                         <input
                             value={title}
                             onChange={e => setTitle(e.target.value)}
-                            placeholder="e.g. Computer Science — Semester 3"
-                            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-slate-600 outline-none focus:border-violet-500/60 transition-colors"
+                            placeholder="e.g. Introduction to Machine Learning"
+                            className="w-full bg-[#0e0e13] border border-white/[0.08] rounded-xl px-4 py-3.5 text-white placeholder-slate-700 outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-500/50 transition-all"
                         />
                     </div>
-                    <div className="w-full sm:w-1/3">
-                        <label className="block text-sm font-medium text-slate-400 mb-2">Exam Date (Optional)</label>
+                    <div className="w-full sm:w-[40%]">
+                        <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Exam Date</label>
                         <input
                             type="date"
                             value={examDate}
                             onChange={e => setExamDate(e.target.value)}
-                            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-slate-300 outline-none focus:border-violet-500/60 transition-colors color-scheme-dark"
+                            className="w-full bg-[#0e0e13] border border-white/[0.08] rounded-xl px-4 py-3.5 text-slate-300 outline-none focus:ring-2 focus:ring-violet-500/40 transition-all"
                             style={{ colorScheme: 'dark' }}
                         />
                     </div>
                 </div>
 
-                {/* Mode Tabs */}
-                <div className="flex gap-1 mb-5 bg-white/[0.04] rounded-xl p-1 border border-white/[0.06]">
-                    {[['drag', 'Upload File'], ['paste', 'Paste Text']].map(([m, label]) => (
+                {/* ─── Tab Bar ─── */}
+                <div className="flex gap-0 mb-6 border-b border-white/[0.07]">
+                    {[['drag', '📄', 'Upload PDF'], ['paste', '✏️', 'Paste Text']].map(([m, emoji, label]) => (
                         <button
                             key={m}
                             onClick={() => setMode(m)}
-                            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${mode === m ? 'bg-violet-600 text-white' : 'text-slate-500 hover:text-white'
-                                }`}
+                            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all relative ${mode === m ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}
                         >
-                            {label}
+                            {emoji} {label}
+                            {mode === m && (
+                                <motion.div
+                                    layoutId="tab-indicator"
+                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-600 to-purple-500 rounded-full"
+                                />
+                            )}
                         </button>
                     ))}
                 </div>
 
-                {/* Upload Zone */}
+                {/* ─── Content Area ─── */}
                 <AnimatePresence mode="wait">
                     {mode === 'drag' ? (
-                        <motion.div
-                            key="drag"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                        >
+                        <motion.div key="drag" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                             {!file ? (
                                 <div
                                     onDrop={onDrop}
                                     onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
                                     onDragLeave={() => setDragging(false)}
                                     onClick={() => document.getElementById('fileInput').click()}
-                                    className={`border-2 border-dashed rounded-2xl p-14 text-center cursor-pointer transition-all ${dragging
-                                        ? 'border-violet-500 bg-violet-600/10'
-                                        : 'border-white/[0.12] hover:border-violet-500/50 hover:bg-white/[0.02]'
-                                        }`}
+                                    className={`relative cursor-pointer rounded-2xl p-14 text-center transition-all duration-300 ${dragging
+                                        ? 'border-2 border-violet-500 bg-violet-600/10 shadow-[0_0_40px_rgba(124,58,237,0.2)]'
+                                        : 'border-2 border-dashed border-white/[0.1] hover:border-violet-500/50 hover:bg-violet-600/5'}`}
+                                    style={dragging ? { borderImage: 'linear-gradient(135deg, #7C3AED, #06B6D4) 1' } : {}}
                                 >
                                     <input id="fileInput" type="file" accept=".pdf,.txt" onChange={onFileChange} className="hidden" />
-                                    <div className="w-14 h-14 bg-violet-600/15 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                        <UploadIcon size={26} className="text-violet-400" />
+
+                                    <motion.div
+                                        animate={dragging ? { scale: 1.15 } : { scale: 1 }}
+                                        className="w-16 h-16 bg-violet-600/15 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                                    >
+                                        <CloudUpload size={30} className="text-violet-400" />
+                                    </motion.div>
+                                    <p className="text-white font-bold text-lg mb-1">
+                                        {dragging ? 'Drop it here!' : 'Drag & drop your syllabus'}
+                                    </p>
+                                    <p className="text-slate-600 text-sm mb-4">or click to browse files</p>
+
+                                    {/* Format chips */}
+                                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                                        {['PDF', 'TXT', 'Max 10MB'].map(tag => (
+                                            <span key={tag} className="text-xs px-3 py-1 rounded-full bg-white/[0.05] text-slate-500 border border-white/[0.07]">{tag}</span>
+                                        ))}
                                     </div>
-                                    <p className="text-white font-semibold mb-1">Drop your syllabus here</p>
-                                    <p className="text-slate-600 text-sm">PDF or TXT • Max 10MB</p>
                                 </div>
                             ) : (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     className="glass rounded-2xl p-5 border border-emerald-500/30 flex items-center gap-4"
+                                    style={{ boxShadow: '0 0 20px rgba(16,185,129,0.1)' }}
                                 >
-                                    <div className="w-12 h-12 bg-emerald-600/15 rounded-xl flex items-center justify-center">
+                                    <div className="w-12 h-12 bg-emerald-600/15 rounded-xl flex items-center justify-center flex-shrink-0">
                                         <FileText size={22} className="text-emerald-400" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-white font-semibold truncate">{file.name}</p>
-                                        <p className="text-slate-500 text-sm">{(file.size / 1024).toFixed(1)} KB</p>
+                                        <p className="text-slate-500 text-sm">{(file.size / 1024).toFixed(1)} KB · Ready to process</p>
                                     </div>
                                     <CheckCircle size={20} className="text-emerald-400 flex-shrink-0" />
-                                    <button onClick={() => setFile(null)} className="text-slate-600 hover:text-red-400 transition-colors">
+                                    <button onClick={() => setFile(null)} className="text-slate-600 hover:text-red-400 transition-colors p-1">
                                         <X size={18} />
                                     </button>
                                 </motion.div>
                             )}
                         </motion.div>
                     ) : (
-                        <motion.div
-                            key="paste"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                        >
-                            <textarea
-                                value={pastedText}
-                                onChange={e => setPastedText(e.target.value)}
-                                placeholder="Paste your full syllabus text here...
-
-e.g.
-Unit 1: Introduction to Programming
-  1.1 Variables and Data Types
-  1.2 Control Flow
-  1.3 Functions
-
-Unit 2: Object-Oriented Programming
-  2.1 Classes and Objects
-  ..."
-                                rows={14}
-                                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-2xl px-5 py-4 text-white placeholder-slate-700 outline-none focus:border-violet-500/60 transition-colors resize-none font-mono text-sm leading-relaxed"
-                            />
-                            <p className="text-xs text-slate-600 mt-2">{pastedText.length} characters</p>
+                        <motion.div key="paste" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                            <div className="relative">
+                                <textarea
+                                    value={pastedText}
+                                    onChange={e => setPastedText(e.target.value)}
+                                    placeholder={`Paste your full syllabus text here...\n\ne.g.\nUnit 1: Introduction to Programming\n  1.1 Variables and Data Types\n  1.2 Control Flow\n\nUnit 2: Object-Oriented Programming\n  2.1 Classes and Objects`}
+                                    rows={14}
+                                    className="w-full bg-[#0e0e13] border border-white/[0.08] rounded-2xl px-5 py-4 text-white placeholder-slate-700 outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/40 transition-all resize-none font-mono text-sm leading-relaxed"
+                                />
+                                <div className="absolute bottom-4 right-4 text-xs text-slate-700">
+                                    {pastedText.length.toLocaleString()} / 10,000
+                                </div>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                {/* Submit */}
+                {/* ─── Submit ─── */}
                 <motion.button
-                    whileHover={{ scale: 1.02, y: -1 }}
+                    whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="w-full mt-6 bg-gradient-to-r from-violet-600 to-purple-700 hover:from-violet-500 hover:to-purple-600 text-white font-bold py-4 rounded-2xl transition-all shadow-[0_0_30px_rgba(124,58,237,0.3)] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base"
+                    className="w-full mt-6 bg-gradient-to-r from-violet-600 to-purple-700 hover:from-violet-500 hover:to-purple-600 text-white font-bold py-4 rounded-2xl transition-all shadow-[0_0_30px_rgba(124,58,237,0.35)] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base"
                 >
                     {loading ? (
-                        <>
-                            <Loader2 size={20} className="animate-spin" />
-                            {loadingMsg}
-                        </>
+                        <><Loader2 size={20} className="animate-spin" /> {loadingMsg}</>
                     ) : (
-                        <>
-                            Generate Study Notes <ArrowRight size={20} />
-                        </>
+                        <><Brain size={20} /> Extract Topics &amp; Generate Notes <ArrowRight size={18} /></>
                     )}
                 </motion.button>
 
                 <p className="text-center text-slate-600 text-xs mt-4">
-                    AI will extract topics and prepare your personalized study module
+                    Usually takes 30–60 seconds depending on syllabus length
                 </p>
+
+                {/* ─── Tips ─── */}
+                <div className="mt-6 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/15 flex items-start gap-3">
+                    <span className="text-lg flex-shrink-0">💡</span>
+                    <p className="text-sm text-slate-400 leading-relaxed">
+                        <span className="text-amber-400 font-semibold">Pro tip:</span> For best results, use a structured syllabus with clear topic headings and sub-topics. The AI performs significantly better with organized content.
+                    </p>
+                </div>
             </motion.div>
         </div>
     );

@@ -11,7 +11,6 @@ const generatedNotesSchema = new mongoose.Schema({
     importantPoints: [String],
     summary: { type: String },
     mermaidDiagram: { type: String },
-    markdownContent: { type: String },
     importantQuestions: [String],
     realWorldApplications: [String],
     flashcards: [{ question: String, answer: String }],

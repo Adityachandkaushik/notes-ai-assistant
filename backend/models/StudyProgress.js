@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const studyProgressSchema = new mongoose.Schema({
-    userId: { type: String, default: 'guest' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     syllabusId: { type: mongoose.Schema.Types.ObjectId, ref: 'Syllabus', required: true },
     completedTopics: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Topic' }],
     bookmarkedTopics: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Topic' }],
@@ -13,6 +13,7 @@ const studyProgressSchema = new mongoose.Schema({
     }],
     lastAccessedTopic: { type: mongoose.Schema.Types.ObjectId, ref: 'Topic' },
 }, { timestamps: true });
+
 
 studyProgressSchema.index({ userId: 1, syllabusId: 1 }, { unique: true });
 

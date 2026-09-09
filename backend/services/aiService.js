@@ -62,6 +62,11 @@ const extractJSON = (text, type = 'object') => {
 const getCompletion = async (systemPrompt, userPrompt, retries = 3) => {
   let lastError;
 
+  // Validate API key is configured
+  if (!process.env.AI_API_KEY || process.env.AI_API_KEY.trim() === '') {
+    throw new Error('AI_API_KEY is not set in your .env file. Please add your OpenAI API key.');
+  }
+
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const response = await openai.chat.completions.create({
@@ -75,9 +80,27 @@ const getCompletion = async (systemPrompt, userPrompt, retries = 3) => {
       return response.choices[0].message.content;
     } catch (err) {
       lastError = err;
-      console.warn(`[aiService] Attempt ${attempt}/${retries} failed: ${err.message}`);
+
+      // Surface clear, actionable errors immediately without retry
+      const status = err?.status || err?.response?.status;
+      if (status === 401) {
+        throw new Error('Invalid OpenAI API key. Check AI_API_KEY in your .env file.');
+      }
+      if (status === 429) {
+        const isQuota = err?.message?.toLowerCase().includes('quota');
+        if (isQuota) {
+          throw new Error('OpenAI quota exceeded. Check your billing at https://platform.openai.com/account/billing');
+        }
+        // Rate limit — retry with backoff
+      }
+      if (status === 503 && attempt >= retries) {
+        throw new Error('OpenAI service is temporarily unavailable. Please try again later.');
+      }
+
+      console.warn(`[aiService] Attempt ${attempt}/${retries} failed (status=${status || 'N/A'}): ${err.message}`);
       if (attempt < retries) {
         const waitMs = Math.pow(2, attempt) * 1000 + Math.random() * 500;
+        console.log(`[aiService] Retrying in ${Math.round(waitMs / 1000)}s...`);
         await sleep(waitMs);
       }
     }

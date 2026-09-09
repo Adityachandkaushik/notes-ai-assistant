@@ -118,28 +118,28 @@ export default function SharedViewer() {
     const selectedTopic = topics.find(t => t._id === selectedTopicId);
 
     return (
-        <div className="flex h-screen gradient-bg">
-            {/* Topic Sidebar */}
-            <div className="w-64 flex-shrink-0 border-r border-white/[0.06] flex flex-col glass">
+        <div className="flex h-screen bg-[#0a0a0f]">
+            {/* ─── Topic Sidebar ─── */}
+            <div className="w-64 flex-shrink-0 border-r border-white/[0.05] flex flex-col bg-[#0e0e13]">
                 {/* Banner */}
-                <div className="p-4 border-b border-white/[0.06] bg-violet-600/10">
-                    <div className="flex items-center gap-2 mb-1">
-                        <BookOpen size={14} className="text-violet-400" />
-                        <span className="text-xs text-violet-400 font-medium">Public Syllabus</span>
+                <div className="p-4 border-b border-white/[0.05]">
+                    <div className="flex items-center gap-1.5 mb-2">
+                        <BookOpen size={12} className="text-violet-400" />
+                        <span className="text-[10px] text-violet-400 font-semibold uppercase tracking-wider">Public Syllabus</span>
                     </div>
-                    <h2 className="font-bold text-white text-sm line-clamp-2">{syllabus?.title}</h2>
-                    <p className="text-[10px] text-slate-500 mt-1">{topics.length} topics</p>
+                    <h2 className="font-bold text-white text-sm line-clamp-2 leading-snug">{syllabus?.title}</h2>
+                    <p className="text-[10px] text-slate-600 mt-1.5">{topics.length} topics available</p>
                 </div>
 
                 {/* Search */}
-                <div className="px-3 py-3 border-b border-white/[0.06]">
+                <div className="px-3 py-3 border-b border-white/[0.05]">
                     <div className="relative">
                         <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
                         <input
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
                             placeholder="Search topics..."
-                            className="w-full bg-white/[0.04] border border-white/[0.06] rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-600 outline-none focus:border-violet-500/50 transition-colors"
+                            className="w-full bg-white/[0.04] border border-white/[0.06] rounded-lg pl-8 pr-3 py-2 text-xs text-white placeholder-slate-700 outline-none focus:border-violet-500/40 transition-colors"
                         />
                     </div>
                 </div>
@@ -152,28 +152,30 @@ export default function SharedViewer() {
                             <button
                                 key={topic._id}
                                 onClick={() => setSelectedTopicId(topic._id)}
-                                className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all ${isSelected ? 'bg-violet-600/15 border-r-2 border-violet-500' : 'hover:bg-white/[0.03]'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all relative ${isSelected ? 'text-violet-300' : 'hover:bg-white/[0.03] text-slate-500'}`}
                             >
+                                {isSelected && <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-violet-500 rounded-r-full" />}
                                 {topic.hasNotes
-                                    ? <CheckCircle size={13} className="text-emerald-400 flex-shrink-0" />
-                                    : <Circle size={13} className={`flex-shrink-0 ${isSelected ? 'text-violet-400' : 'text-slate-700'}`} />
+                                    ? <CheckCircle size={12} className="text-emerald-400 flex-shrink-0" />
+                                    : <Circle size={12} className={`flex-shrink-0 ${isSelected ? 'text-violet-400' : 'text-slate-700'}`} />
                                 }
-                                <span className={`text-xs font-medium flex-1 line-clamp-2 ${isSelected ? 'text-violet-300' : 'text-slate-400'}`}>{topic.name}</span>
+                                <span className={`text-xs font-medium flex-1 line-clamp-2 ${isSelected ? 'text-violet-300' : ''}`}>{topic.name}</span>
                             </button>
                         );
                     })}
                 </div>
 
-                {/* Credit */}
-                <div className="p-3 border-t border-white/[0.06] text-center">
-                    <Link to="/signup" className="text-xs text-violet-400 hover:text-violet-300 transition-colors">
-                        Create your own notes with NoteAI →
+                {/* CTA in sidebar */}
+                <div className="p-3 border-t border-white/[0.05]">
+                    <Link to="/signup"
+                        className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-violet-600/15 text-violet-400 hover:bg-violet-600/25 transition-all text-xs font-semibold">
+                        Try NoteAI Free →
                     </Link>
                 </div>
             </div>
 
-            {/* Notes Content */}
-            <div className="flex-1 overflow-y-auto">
+            {/* ─── Notes Content ─── */}
+            <div className="flex-1 overflow-y-auto bg-[#0a0a0f]">
                 {notesLoading && (
                     <div className="flex items-center justify-center h-64">
                         <Loader2 size={28} className="text-violet-400 animate-spin" />
@@ -183,16 +185,19 @@ export default function SharedViewer() {
                 {!notesLoading && !notes && (
                     <div className="flex flex-col items-center justify-center h-64 text-slate-500">
                         <BookOpen size={36} className="mb-3 opacity-30" />
-                        <p>Notes not yet generated for this topic.</p>
+                        <p className="text-sm">Notes not yet generated for this topic.</p>
                     </div>
                 )}
 
                 {notes && (
-                    <div className="max-w-4xl mx-auto px-6 py-8">
+                    <div className="max-w-3xl mx-auto px-6 py-8">
                         {/* Header */}
-                        <div className="flex items-center justify-between mb-6">
-                            <div>
-                                <h1 className="text-2xl font-bold gradient-text">{notes.topicName}</h1>
+                        <div className="flex items-start justify-between mb-6">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-[10px] px-2.5 py-0.5 rounded-full border border-violet-500/40 bg-violet-500/10 text-violet-300 font-semibold tracking-wider uppercase">✦ Shared Notes</span>
+                                </div>
+                                <h1 className="text-2xl font-bold text-white">{notes.topicName}</h1>
                                 <p className="text-slate-500 text-sm mt-1">{syllabus?.title}</p>
                             </div>
                             {/* TTS controls */}
@@ -269,12 +274,25 @@ export default function SharedViewer() {
                         )}
 
                         {/* CTA */}
-                        <div className="mt-8 glass rounded-2xl border border-violet-500/20 p-6 text-center bg-violet-600/5">
-                            <p className="text-white font-semibold mb-1">Want AI notes for your own syllabus?</p>
-                            <p className="text-slate-400 text-sm mb-4">Upload any PDF or text and get instant notes, quizzes, and flashcards.</p>
-                            <Link to="/signup" className="inline-flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-medium transition-all">
-                                Get Started Free →
-                            </Link>
+                        <div className="mt-8 rounded-3xl border border-violet-500/20 p-8 text-center relative overflow-hidden"
+                            style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(6,182,212,0.05) 100%)', boxShadow: '0 0 60px rgba(124,58,237,0.1)' }}>
+                            <div className="absolute inset-0 pointer-events-none">
+                                <div className="absolute -top-20 -right-20 w-48 h-48 bg-violet-600/15 rounded-full blur-3xl" />
+                            </div>
+                            <div className="relative z-10">
+                                <p className="text-xl font-black text-white mb-2">Want AI notes for your own syllabus?</p>
+                                <p className="text-slate-400 text-sm mb-6">Upload any PDF or paste text and get structured notes, quizzes, and flashcards in seconds.</p>
+                                <Link to="/signup">
+                                    <motion.button
+                                        whileHover={{ scale: 1.04, y: -2 }}
+                                        whileTap={{ scale: 0.97 }}
+                                        className="inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-violet-600 to-purple-700 hover:from-violet-500 hover:to-purple-600 text-white rounded-xl font-bold transition-all shadow-[0_0_25px_rgba(124,58,237,0.4)]"
+                                    >
+                                        Try NoteAI Free →
+                                    </motion.button>
+                                </Link>
+                                <p className="text-xs text-slate-700 mt-3">Free · No credit card required</p>
+                            </div>
                         </div>
                     </div>
                 )}
