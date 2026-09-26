@@ -4,7 +4,7 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
     const [theme, setTheme] = useState(() => localStorage.getItem('noteai-theme') || 'dark');
-
+ 
     useEffect(() => {
         document.documentElement.classList.toggle('light', theme === 'light');
         localStorage.setItem('noteai-theme', theme);
