@@ -11,7 +11,7 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
     timeout: 180000, // 3 minutes — AI Vision PDF extraction can take up to 2min
-});
+});  
 
 // Optional: request interceptor for future auth tokens
 api.interceptors.request.use((config) => {
