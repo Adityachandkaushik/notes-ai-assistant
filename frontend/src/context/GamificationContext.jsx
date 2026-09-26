@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
  *   note_generated     +10 XP
  *   topic_completed    +20 XP
  *   quiz_passed        +30 XP (score >= 70%)
- *   daily_login        +15 XP (once per day)
+ *   daily_login        +15 XP (once per day) 
  *   flashcard_session  +10 XP
  *
  * Level thresholds: 100 XP per level
