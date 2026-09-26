@@ -3,7 +3,7 @@ import axios from 'axios';
 /**
  * Central Axios instance.
  * In development, Vite proxy routes /api → VITE_BACKEND_URL (e.g. http://localhost:5000).
- * In production, set VITE_API_URL to your deployed backend URL (e.g. https://api.yourapp.com/api).
+ * In production, set VITE_API_URL to your deployed backend URL (e.g. https://api.yourapp.com/api). 
  */
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || '/api',
