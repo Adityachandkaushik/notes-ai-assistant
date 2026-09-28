@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const GeneratedNotes = require('../models/GeneratedNotes');
 const { chatWithAI, generateQuiz, generateFlashcards } = require('../services/aiService');
-
+  
 // POST /api/chat
 router.post('/', async (req, res) => {
     const { question, topicId, syllabusContext, history } = req.body;
