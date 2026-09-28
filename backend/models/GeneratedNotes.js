@@ -9,7 +9,7 @@ const generatedNotesSchema = new mongoose.Schema({
     keyTerms: [{ term: String, definition: String }],
     examples: [{ title: String, content: String }],
     importantPoints: [String],
-    summary: { type: String },
+    summary: { type: String },   
     mermaidDiagram: { type: String },
     importantQuestions: [String],
     realWorldApplications: [String],
