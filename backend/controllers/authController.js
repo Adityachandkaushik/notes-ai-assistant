@@ -11,7 +11,7 @@ const generateToken = (id) => {
 /**
  * POST /api/auth/register
  * Register a new user
- */
+ */    
 const register = async (req, res) => {
     const { name, password } = req.body;
     const email = req.body.email?.trim()?.toLowerCase();
