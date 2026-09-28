@@ -8,7 +8,7 @@ const quizSchema = new mongoose.Schema({
         unique: true
     },
     syllabusId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,  
         ref: 'Syllabus',
         required: true
     },
