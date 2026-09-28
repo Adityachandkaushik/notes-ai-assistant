@@ -9,7 +9,7 @@ const PDFDocument = require('pdfkit');
  * Generate and download a single PDF containing all generated notes for a syllabus.
  */
 const downloadAllNotesPDF = async (req, res) => {
-    try {
+    try    
         const { syllabusId } = req.params;
 
         // Fetch syllabus
