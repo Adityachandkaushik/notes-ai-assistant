@@ -7,7 +7,7 @@ const syllabusSchema = new mongoose.Schema({
     fileType: { type: String, enum: ['pdf', 'text', 'paste'], default: 'text' },
     status: { type: String, enum: ['pending', 'processing', 'completed', 'error'], default: 'pending' },
     topics: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Topic' }],
-    userId: { type: String, default: 'guest' },
+    userId: { type: String, default: 'guest' },   
     totalTopics: { type: Number, default: 0 },
     generatedTopics: {
         type: Number,
