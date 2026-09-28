@@ -9,7 +9,7 @@ const studyProgressSchema = new mongoose.Schema({
         topicId: { type: mongoose.Schema.Types.ObjectId, ref: 'Topic' },
         score: Number,
         total: Number,
-        attemptedAt: { type: Date, default: Date.now },
+        attemptedAt: { type: Date, default: Date.now },  
     }],
     lastAccessedTopic: { type: mongoose.Schema.Types.ObjectId, ref: 'Topic' },
 }, { timestamps: true });
