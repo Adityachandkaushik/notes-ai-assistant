@@ -3,7 +3,7 @@ const router = express.Router();
 const GeneratedNotes = require('../models/GeneratedNotes');
 const Topic = require('../models/Topic');
 const Syllabus = require('../models/Syllabus');
-const Quiz = require('../models/Quiz');
+const Quiz = require('../models/Quiz');  
 const { generateNotes, generateQuiz, translateNotes } = require('../services/aiService');
 const { downloadAllNotesPDF } = require('../controllers/pdfController');
 
