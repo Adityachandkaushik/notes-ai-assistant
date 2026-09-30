@@ -8,7 +8,7 @@ export default function ChatAssistant() {
     const [messages, setMessages] = useState([
         { role: 'assistant', content: "Hi! I'm your AI study assistant 🧠 Ask me anything about your study topics! (Tip: I remember our conversation context)" }
     ]);
-    const [input, setInput] = useState('');
+    const [input, setInput] = useState(''); 
     const [loading, setLoading] = useState(false);
     const [listening, setListening] = useState(false);
     const bottomRef = useRef(null);
