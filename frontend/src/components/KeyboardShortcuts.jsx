@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
  *   Ctrl+K        → Global Search (handled in GlobalSearch.jsx)
  *   Alt+Shift+Q   → Open Quiz
  *   Alt+Shift+F   → Open Flashcards
- *   ?             → Show shortcuts help
+ *   ?             → Show shortcuts help  
  */
 export default function KeyboardShortcuts() {
     const navigate = useNavigate();
