@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X, BookOpen, Hash, FileText, Command } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-
+  
 const typeIcons = { syllabus: BookOpen, topic: Hash, note: FileText };
 
 export default function GlobalSearch() {
