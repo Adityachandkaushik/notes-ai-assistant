@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
 import {
     Brain, Zap, Target, BarChart3, ChevronRight, Sparkles,
-    Star, ArrowRight, BookOpen, FlaskConical, Map, Shield,
+    Star, ArrowRight, BookOpen, FlaskConical, Map, Shield,    
     Users, FileText, TrendingUp, Clock, CheckCircle
 } from 'lucide-react';
 
