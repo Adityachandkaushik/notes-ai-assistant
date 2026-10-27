@@ -5,7 +5,7 @@ import { LogIn, Mail, Lock, Loader2, Brain, ArrowRight, Sparkles, CheckCircle, Z
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
-const features = [
+const features = [  
     { icon: Sparkles, text: 'AI-generated notes from any syllabus' },
     { icon: Zap, text: 'Smart quizzes & adaptive flashcards' },
     { icon: BarChart3, text: 'Progress tracking with XP & streaks' },
