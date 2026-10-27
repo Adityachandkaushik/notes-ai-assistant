@@ -7,7 +7,7 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 
 // Flashcard component
-function FlashCard({ term, definition }) {
+function FlashCard({ term, definition }) {   
     const [flipped, setFlipped] = useState(false);
     return (
         <div className="flip-card w-full h-44 cursor-pointer" onClick={() => setFlipped(f => !f)}>
