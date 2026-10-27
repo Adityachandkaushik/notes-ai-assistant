@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
+import {   
     Plus, BookOpen, Clock, TrendingUp, Trash2, ChevronRight,
     FileText, Loader2, Brain, Zap, Target, BarChart3, Sparkles, Calendar, AlertTriangle
 } from 'lucide-react';
