@@ -4,7 +4,7 @@
  * Phase 5 refactoring: This was 468 lines of duplicated NotesViewer code.
  * Now it fetches the shared syllabus and notes using the public API
  * and reuses a minimal, read-only version of the notes display.
- */
+ */  
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
