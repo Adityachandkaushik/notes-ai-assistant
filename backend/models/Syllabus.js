@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const syllabusSchema = new mongoose.Schema({
     title: { type: String, required: true, trim: true },
     rawText: { type: String, required: true },
-    fileUrl: { type: String },
+    fileUrl: { type: String },   
     fileType: { type: String, enum: ['pdf', 'text', 'paste'], default: 'text' },
     status: { type: String, enum: ['pending', 'processing', 'completed', 'error'], default: 'pending' },
     topics: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Topic' }],
