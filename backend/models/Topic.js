@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const topicSchema = new mongoose.Schema({
-    name: { type: String, required: true, trim: true },
+    name: { type: String, required: true, trim: true },   
     syllabusId: { type: mongoose.Schema.Types.ObjectId, ref: 'Syllabus', required: true },  
     order: { type: Number, default: 0 },
     description: { type: String },
