@@ -1,7 +1,7 @@
 const CACHE_NAME = 'noteai-v1';
 const STATIC_ASSETS = [
     '/',
-    '/index.html',
+    '/index.html',    
     '/manifest.json',
 ];
 
