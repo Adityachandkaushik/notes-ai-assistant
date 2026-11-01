@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 /**
  * Gamification system for NoteAI.
  * Tracks: XP, Level, Streaks, Achievements — all stored in localStorage.
- *
+ *   
  * XP Events:
  *   note_generated     +10 XP
  *   topic_completed    +20 XP
