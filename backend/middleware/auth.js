@@ -3,7 +3,7 @@ const User = require('../models/User');
 
 /**
  * Protect routes — verify JWT token and attach user to request
- */
+ */  
 const protect = async (req, res, next) => {
     let token;
 
