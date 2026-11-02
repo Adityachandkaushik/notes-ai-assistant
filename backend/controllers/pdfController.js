@@ -1,7 +1,7 @@
 const path = require('path');
 const Syllabus = require('../models/Syllabus');
 const Topic = require('../models/Topic');
-const GeneratedNotes = require('../models/GeneratedNotes');
+const GeneratedNotes = require('../models/GeneratedNotes');   
 const PDFDocument = require('pdfkit');
 
 /**
